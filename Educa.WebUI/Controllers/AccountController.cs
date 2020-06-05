@@ -20,17 +20,34 @@ namespace Educa.WebUI.Controllers
             _identityService = identityService;
         }
 
+        [HttpGet("{id}")]
+        public async Task<JsonResult<UserDto>> GetUser(string userId)
+        {
+            return await _identityService.GetUserAsync(userId);
+        }
+
         [HttpPost]
+        public async Task<ServerResult> CreateUser(UserDto dtoModel)
+        {
+            return await _identityService.CreateUserAsync(dtoModel);
+        }
+
+        [HttpPut("[action]")]
+        public async Task<ServerResult> UpdateUser(UserDto dtoModel)
+        {
+            return await _identityService.UpdateUserAsync(dtoModel);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ServerResult> DeleteUser(string userId)
+        {
+            return await _identityService.DeleteUserAsync(userId);
+        }
+
+        [HttpPost("[action]")]
         public async Task<JsonResult<string>> Login(LoginDto dtoModel)
         {
             return await _identityService.LoginUserAsync(dtoModel);
         }
-
-        //[HttpPost]
-        //public async Task<JsonResult<string>> CreateUser(LoginDto dtoModel)
-        //{
-        //    return await _identityService.CreateUserAsync(dtoModel);
-        //}
-
     }
 }

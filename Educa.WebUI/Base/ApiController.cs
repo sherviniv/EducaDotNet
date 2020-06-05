@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Educa.WebUI.Base
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     public class ApiController : ControllerBase
     {
 

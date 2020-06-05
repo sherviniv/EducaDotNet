@@ -1,4 +1,6 @@
-﻿using Educa.Application.Common.Exceptions;
+﻿using AutoMapper;
+using Educa.Application.Common.Exceptions;
+using Educa.Application.Common.Extensions;
 using Educa.Application.Common.Interfaces;
 using Educa.Application.Common.Models.BaseModels;
 using Educa.Application.Common.Models.Dtos;
@@ -16,13 +18,18 @@ namespace Educa.Application.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IJwtHandler _jwtHandler;
+        private readonly IMapper _mapper;
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
-            IJwtHandler jwtHandler)
+            SignInManager<ApplicationUser> signInManager,
+            IJwtHandler jwtHandler,
+            IMapper mapper)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _jwtHandler = jwtHandler;
+            _mapper = mapper;
         }
 
         public async Task<string> GetUserNameAsync(string userId)
@@ -32,15 +39,27 @@ namespace Educa.Application.Services
             return user.UserName;
         }
 
-        public async Task<ServerResult> CreateUserAsync(string userName, string password)
+        public async Task<JsonResult<UserDto>> GetUserAsync(string userId)
+        {
+            var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
+
+            if (user == null)
+                throw new EducaException("userId_not_found", "User was not found.");
+
+            return _mapper.Map(user,new UserDto()).ToJsonResult();
+        }
+
+        public async Task<ServerResult> CreateUserAsync(UserDto model)
         {
             var user = new ApplicationUser
             {
-                UserName = userName,
-                Email = userName,
+                UserName = model.UserName,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName
             };
 
-            var result = await _userManager.CreateAsync(user, password);
+            var result = await _userManager.CreateAsync(user, model.Password);
 
             return result.Succeeded ? ServerResult.Success() : new ServerResult()
             {
@@ -72,6 +91,25 @@ namespace Educa.Application.Services
             }; 
         }
 
+        public async Task<ServerResult> UpdateUserAsync(UserDto model)
+        {
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == model.UserName);
+
+            if (user == null)
+                throw new EducaException("userName_not_found"
+                    , $"UserName: '{model.UserName}' was not found.");
+
+            _mapper.Map(model, user);
+
+            var result = await _userManager.UpdateAsync(user);
+
+            return result.Succeeded ? ServerResult.Success() : new ServerResult()
+            {
+                Succeeded = false,
+                Errors = result.Errors.Select(e => e.Description).ToArray()
+            };
+        }
+
         public async Task<JsonResult<string>> LoginUserAsync(LoginDto model)
         {
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == model.UserName);
@@ -89,6 +127,5 @@ namespace Educa.Application.Services
 
             return new JsonResult<string>(_jwtHandler.Generate(user));
         }
-
     }
 }
