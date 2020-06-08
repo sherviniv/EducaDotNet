@@ -2,6 +2,7 @@ using Educa.Application;
 using Educa.Application.Common.Interfaces;
 using Educa.Infrastructure;
 using Educa.WebUI.Filters;
+using Educa.WebUI.Middlewares;
 using Educa.WebUI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,8 +35,7 @@ namespace Educa.WebUI
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddHttpContextAccessor();
 
-            services.AddControllersWithViews(options =>
-                         options.Filters.Add(new ExceptionHandlerFilter()));
+            services.AddControllersWithViews();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -72,6 +72,7 @@ namespace Educa.WebUI
                 app.UseHsts();
             }
 
+            app.UseCustomExceptionHandlerMiddleware();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())

@@ -21,7 +21,7 @@ namespace Educa.Application.Common.Models.BaseModels
         }
 
 
-        public static ServerResult Exception(string message,string status,string[] errors = default)
+        public static ServerResult Exception(string message,string status = "exception",string[] errors = default)
         {
             return new ServerResult()
             {
@@ -34,8 +34,8 @@ namespace Educa.Application.Common.Models.BaseModels
         }
 
         public bool Succeeded { get; set; }
-        public bool IsException { get; set; }
-        public string Status { get; set; }
+        protected bool IsException { get; set; }
+        protected string Status { get; set; }
         public string Message { get; set; }
         public string[] Errors { get; set; }
     }
