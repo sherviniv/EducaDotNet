@@ -1,7 +1,6 @@
 using Educa.Application;
 using Educa.Application.Common.Interfaces;
 using Educa.Infrastructure;
-using Educa.WebUI.Filters;
 using Educa.WebUI.Middlewares;
 using Educa.WebUI.Services;
 using Microsoft.AspNetCore.Builder;

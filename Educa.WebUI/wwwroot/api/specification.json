@@ -250,13 +250,6 @@
           "succeeded": {
             "type": "boolean"
           },
-          "isException": {
-            "type": "boolean"
-          },
-          "status": {
-            "type": "string",
-            "nullable": true
-          },
           "message": {
             "type": "string",
             "nullable": true

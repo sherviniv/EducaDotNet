@@ -422,8 +422,6 @@ export interface IUserDto {
 
 export class ServerResult implements IServerResult {
     succeeded?: boolean;
-    isException?: boolean;
-    status?: string | undefined;
     message?: string | undefined;
     errors?: string[] | undefined;
 
@@ -439,8 +437,6 @@ export class ServerResult implements IServerResult {
     init(_data?: any) {
         if (_data) {
             this.succeeded = _data["succeeded"];
-            this.isException = _data["isException"];
-            this.status = _data["status"];
             this.message = _data["message"];
             if (Array.isArray(_data["errors"])) {
                 this.errors = [] as any;
@@ -460,8 +456,6 @@ export class ServerResult implements IServerResult {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["succeeded"] = this.succeeded;
-        data["isException"] = this.isException;
-        data["status"] = this.status;
         data["message"] = this.message;
         if (Array.isArray(this.errors)) {
             data["errors"] = [];
@@ -474,8 +468,6 @@ export class ServerResult implements IServerResult {
 
 export interface IServerResult {
     succeeded?: boolean;
-    isException?: boolean;
-    status?: string | undefined;
     message?: string | undefined;
     errors?: string[] | undefined;
 }
