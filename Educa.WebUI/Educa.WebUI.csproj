@@ -29,21 +29,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="ClientApp\src\app\core\models\index.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Educa.Application\Educa.Application.csproj" />
     <ProjectReference Include="..\Educa.Infrastructure\Educa.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="ClientApp\src\app\core\services\" />
-    <Folder Include="ClientApp\src\app\shared\components\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\src\app\core\models\index.ts" />
   </ItemGroup>
 
   <Target Name="NSwag" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">

@@ -2,13 +2,17 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminLayoutRoutingModule } from './admin-layout.routing.module';
 import { AdminLayoutComponent } from './admin-layout.component';
-import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
-import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
+import { FetchDataComponent } from '../../fetch-data/fetch-data.component';
+import { SidebarComponent, NavbarComponent } from '../../shared/components';
 
 
 
 @NgModule({
-  declarations: [AdminLayoutComponent, SidebarComponent, NavbarComponent],
+  declarations: [
+    AdminLayoutComponent,
+    SidebarComponent,
+    NavbarComponent,
+    FetchDataComponent],
   imports: [
     CommonModule,
     AdminLayoutRoutingModule,
