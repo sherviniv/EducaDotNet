@@ -1,6 +1,5 @@
 ﻿using Educa.Application.Common.Models.BaseModels;
 using Educa.Application.Common.Models.Dtos;
-using Microsoft.AspNet.Identity;
 using System.Threading.Tasks;
 
 namespace Educa.Application.Common.Interfaces

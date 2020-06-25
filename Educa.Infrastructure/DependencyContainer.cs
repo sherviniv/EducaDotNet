@@ -21,10 +21,12 @@ namespace Educa.Infrastructure
         {
             var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
 
-            services.AddDbContextPool<EducaDbContext>(options =>
-             options.UseSqlServer(
-                 configuration.GetConnectionString("DefaultConnection"),
-                 b => b.MigrationsAssembly(typeof(EducaDbContext).Assembly.FullName)));
+            services.AddDbContext<EducaDbContext>((serviceProvider, options) =>
+            {
+                options.UseSqlServer(
+                    configuration.GetConnectionString("DefaultConnection"),
+                    b => b.MigrationsAssembly(typeof(EducaDbContext).Assembly.FullName));
+            });
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
