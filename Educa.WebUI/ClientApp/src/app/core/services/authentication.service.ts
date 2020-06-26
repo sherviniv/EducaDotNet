@@ -24,9 +24,9 @@ export class AuthenticationService {
     return this.client.login(model).pipe(map(response => {
       if (response && response.succeeded) {
 
-        let user: User = this.decodeJWT(response.data);
+        const user = this.decodeJWT(response.data);
         user.token = response.data;
-
+        user.roles = JSON.parse(user.roles);
         // store user details and jwt token in local storage to keep user logged in between page refreshes
         localStorage.setItem('currentUser', JSON.stringify(user));
         this.currentUserSubject.next(user);

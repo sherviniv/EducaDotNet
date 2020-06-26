@@ -2,7 +2,9 @@
 using Educa.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -18,7 +20,7 @@ namespace Educa.Infrastructure.Jwt
             _appSettings = appSettings.Value;
         }
 
-        public string Generate(ApplicationUser user)
+        public string Generate(ApplicationUser user,List<string> roles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Jwt.Key);
@@ -29,6 +31,7 @@ namespace Educa.Infrastructure.Jwt
                        new Claim("userid",user.Id),
                        new Claim("username",user.UserName),
                        new Claim("displayName",$"{user.FirstName} {user.LastName}" ),
+                       new Claim("roles",JsonConvert.SerializeObject(roles)),
                 }),
                 Issuer = _appSettings.Jwt.Issuer,
                 Expires = DateTime.UtcNow.AddMinutes(_appSettings.Jwt.ExpiryMinutes),

@@ -7,6 +7,6 @@ namespace Educa.Infrastructure.Jwt
 {
     public interface IJwtHandler
     {
-        string Generate(ApplicationUser user);
+        string Generate(ApplicationUser user,List<string> roles);
     }
 }

@@ -125,7 +125,9 @@ namespace Educa.Application.Services
                 throw new EducaException("invalid_credentials",
                     "invalid credentials.");
 
-            return new DataResult<string>(_jwtHandler.Generate(user));
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new DataResult<string>(_jwtHandler.Generate(user,roles.ToList()));
         }
     }
 }
