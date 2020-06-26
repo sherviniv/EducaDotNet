@@ -19,7 +19,9 @@ namespace Educa.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
+            var appSettingsSection = configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+            var appSettings = appSettingsSection.Get<AppSettings>();
 
             services.AddDbContext<EducaDbContext>((serviceProvider, options) =>
             {

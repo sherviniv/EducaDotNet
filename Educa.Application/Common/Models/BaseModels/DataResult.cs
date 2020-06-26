@@ -4,15 +4,15 @@ using System.Text;
 
 namespace Educa.Application.Common.Models.BaseModels
 {
-    public class JsonResult<T> : ServerResult
+    public class DataResult<T> : ServerResult
     {
         public T Data { get; set; }
 
-        public JsonResult()
+        public DataResult()
         {
         }
 
-        public JsonResult(T data, bool succeeded = true)
+        public DataResult(T data, bool succeeded = true)
         {
             Data = data;
             Succeeded = succeeded;

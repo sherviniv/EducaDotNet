@@ -21,7 +21,7 @@ namespace Educa.WebUI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<JsonResult<UserDto>> GetUser(string userId)
+        public async Task<DataResult<UserDto>> GetUser(string userId)
         {
             return await _identityService.GetUserAsync(userId);
         }
@@ -45,7 +45,7 @@ namespace Educa.WebUI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<JsonResult<string>> Login(LoginDto dtoModel)
+        public async Task<DataResult<string>> Login(LoginDto dtoModel)
         {
             return await _identityService.LoginUserAsync(dtoModel);
         }

@@ -15,11 +15,11 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAccountClient {
-    getUser(userId: string | null | undefined, id: string): Observable<UserDto>;
+    getUser(userId: string | null | undefined, id: string): Observable<DataResultOfUserDto>;
     deleteUser(userId: string | null | undefined, id: string): Observable<ServerResult>;
     createUser(dtoModel: UserDto): Observable<ServerResult>;
     updateUser(dtoModel: UserDto): Observable<ServerResult>;
-    login(dtoModel: LoginDto): Observable<string>;
+    login(dtoModel: LoginDto): Observable<DataResultOfString>;
 }
 
 @Injectable({
@@ -35,7 +35,7 @@ export class AccountClient implements IAccountClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    getUser(userId: string | null | undefined, id: string): Observable<UserDto> {
+    getUser(userId: string | null | undefined, id: string): Observable<DataResultOfUserDto> {
         let url_ = this.baseUrl + "/api/Account/{id}?";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -59,14 +59,14 @@ export class AccountClient implements IAccountClient {
                 try {
                     return this.processGetUser(<any>response_);
                 } catch (e) {
-                    return <Observable<UserDto>><any>_observableThrow(e);
+                    return <Observable<DataResultOfUserDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<UserDto>><any>_observableThrow(response_);
+                return <Observable<DataResultOfUserDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetUser(response: HttpResponseBase): Observable<UserDto> {
+    protected processGetUser(response: HttpResponseBase): Observable<DataResultOfUserDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -77,7 +77,7 @@ export class AccountClient implements IAccountClient {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = UserDto.fromJS(resultData200);
+            result200 = DataResultOfUserDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -85,7 +85,7 @@ export class AccountClient implements IAccountClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<UserDto>(<any>null);
+        return _observableOf<DataResultOfUserDto>(<any>null);
     }
 
     deleteUser(userId: string | null | undefined, id: string): Observable<ServerResult> {
@@ -245,7 +245,7 @@ export class AccountClient implements IAccountClient {
         return _observableOf<ServerResult>(<any>null);
     }
 
-    login(dtoModel: LoginDto): Observable<string> {
+    login(dtoModel: LoginDto): Observable<DataResultOfString> {
         let url_ = this.baseUrl + "/api/Account/Login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -268,14 +268,14 @@ export class AccountClient implements IAccountClient {
                 try {
                     return this.processLogin(<any>response_);
                 } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
+                    return <Observable<DataResultOfString>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<string>><any>_observableThrow(response_);
+                return <Observable<DataResultOfString>><any>_observableThrow(response_);
         }));
     }
 
-    protected processLogin(response: HttpResponseBase): Observable<string> {
+    protected processLogin(response: HttpResponseBase): Observable<DataResultOfString> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -286,7 +286,7 @@ export class AccountClient implements IAccountClient {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = DataResultOfString.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -294,7 +294,7 @@ export class AccountClient implements IAccountClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<string>(<any>null);
+        return _observableOf<DataResultOfString>(<any>null);
     }
 }
 
@@ -368,6 +368,91 @@ export class WeatherForecastClient implements IWeatherForecastClient {
     }
 }
 
+export class ServerResult implements IServerResult {
+    succeeded?: boolean;
+    message?: string | undefined;
+    errors?: string[] | undefined;
+
+    constructor(data?: IServerResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.succeeded = _data["succeeded"];
+            this.message = _data["message"];
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): ServerResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new ServerResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["succeeded"] = this.succeeded;
+        data["message"] = this.message;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IServerResult {
+    succeeded?: boolean;
+    message?: string | undefined;
+    errors?: string[] | undefined;
+}
+
+export class DataResultOfUserDto extends ServerResult implements IDataResultOfUserDto {
+    data?: UserDto | undefined;
+
+    constructor(data?: IDataResultOfUserDto) {
+        super(data);
+    }
+
+    init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.data = _data["data"] ? UserDto.fromJS(_data["data"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DataResultOfUserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataResultOfUserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        super.toJSON(data);
+        return data; 
+    }
+}
+
+export interface IDataResultOfUserDto extends IServerResult {
+    data?: UserDto | undefined;
+}
+
 export class UserDto implements IUserDto {
     email!: string;
     userName!: string;
@@ -420,56 +505,37 @@ export interface IUserDto {
     password: string;
 }
 
-export class ServerResult implements IServerResult {
-    succeeded?: boolean;
-    message?: string | undefined;
-    errors?: string[] | undefined;
+export class DataResultOfString extends ServerResult implements IDataResultOfString {
+    data?: string | undefined;
 
-    constructor(data?: IServerResult) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
+    constructor(data?: IDataResultOfString) {
+        super(data);
     }
 
     init(_data?: any) {
+        super.init(_data);
         if (_data) {
-            this.succeeded = _data["succeeded"];
-            this.message = _data["message"];
-            if (Array.isArray(_data["errors"])) {
-                this.errors = [] as any;
-                for (let item of _data["errors"])
-                    this.errors!.push(item);
-            }
+            this.data = _data["data"];
         }
     }
 
-    static fromJS(data: any): ServerResult {
+    static fromJS(data: any): DataResultOfString {
         data = typeof data === 'object' ? data : {};
-        let result = new ServerResult();
+        let result = new DataResultOfString();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["succeeded"] = this.succeeded;
-        data["message"] = this.message;
-        if (Array.isArray(this.errors)) {
-            data["errors"] = [];
-            for (let item of this.errors)
-                data["errors"].push(item);
-        }
+        data["data"] = this.data;
+        super.toJSON(data);
         return data; 
     }
 }
 
-export interface IServerResult {
-    succeeded?: boolean;
-    message?: string | undefined;
-    errors?: string[] | undefined;
+export interface IDataResultOfString extends IServerResult {
+    data?: string | undefined;
 }
 
 export class LoginDto implements ILoginDto {

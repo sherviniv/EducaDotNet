@@ -26,7 +26,9 @@ namespace Educa.Infrastructure.Jwt
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                       new Claim("UserID",user.Id)
+                       new Claim("userid",user.Id),
+                       new Claim("username",user.UserName),
+                       new Claim("displayName",$"{user.FirstName} {user.LastName}" ),
                 }),
                 Issuer = _appSettings.Jwt.Issuer,
                 Expires = DateTime.UtcNow.AddMinutes(_appSettings.Jwt.ExpiryMinutes),

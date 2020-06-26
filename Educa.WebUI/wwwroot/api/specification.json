@@ -38,7 +38,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserDto"
+                  "$ref": "#/components/schemas/DataResultOfUserDto"
                 }
               }
             }
@@ -172,7 +172,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/DataResultOfString"
                 }
               }
             }
@@ -206,6 +206,27 @@
   },
   "components": {
     "schemas": {
+      "DataResultOfUserDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ServerResult"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "data": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/UserDto"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
       "UserDto": {
         "type": "object",
         "additionalProperties": false,
@@ -262,6 +283,23 @@
             }
           }
         }
+      },
+      "DataResultOfString": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ServerResult"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "data": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          }
+        ]
       },
       "LoginDto": {
         "type": "object",

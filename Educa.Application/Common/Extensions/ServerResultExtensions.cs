@@ -7,9 +7,9 @@ namespace Educa.Application.Common.Extensions
 {
     public static class ServerResultExtensions
     {
-        public static JsonResult<T> ToJsonResult<T>(this T data, bool succeeded = true)
+        public static DataResult<T> ToJsonResult<T>(this T data, bool succeeded = true)
         {
-            return new JsonResult<T> { Data = data, Succeeded = succeeded };
+            return new DataResult<T> { Data = data, Succeeded = succeeded };
         }
     }
 }

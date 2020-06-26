@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoginDto } from '../../EducaDotNet-api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../core/services';
-import { map } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -37,9 +37,16 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.authenticationService.login(this.model).toPromise().then(response => {
-      alert(response);
-    });
+    this.authenticationService.login(this.model)
+      .pipe(first())
+      .subscribe(
+        () => {
+          this.router.navigate([this.returnUrl]);
+        },
+        error => {
+          
+        });
+
   }
 
 }

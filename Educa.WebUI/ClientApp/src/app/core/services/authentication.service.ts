@@ -21,9 +21,21 @@ export class AuthenticationService {
   }
 
   login(model: LoginDto) {
-    return this.client.login(model).pipe(map(token => {
-      return token;
+    return this.client.login(model).pipe(map(response => {
+      if (response && response.succeeded) {
+
+        let user: User = this.decodeJWT(response.data);
+        user.token = response.data;
+
+        // store user details and jwt token in local storage to keep user logged in between page refreshes
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+      }
     }));
+  }
+
+  private decodeJWT(token: string) {
+    return JSON.parse(atob(token.split('.')[1]));
   }
 
   logout() {

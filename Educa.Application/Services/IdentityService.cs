@@ -39,7 +39,7 @@ namespace Educa.Application.Services
             return user.UserName;
         }
 
-        public async Task<JsonResult<UserDto>> GetUserAsync(string userId)
+        public async Task<DataResult<UserDto>> GetUserAsync(string userId)
         {
             var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
 
@@ -110,7 +110,7 @@ namespace Educa.Application.Services
             };
         }
 
-        public async Task<JsonResult<string>> LoginUserAsync(LoginDto model)
+        public async Task<DataResult<string>> LoginUserAsync(LoginDto model)
         {
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == model.UserName);
 
@@ -125,7 +125,7 @@ namespace Educa.Application.Services
                 throw new EducaException("invalid_credentials",
                     "invalid credentials.");
 
-            return new JsonResult<string>(_jwtHandler.Generate(user));
+            return new DataResult<string>(_jwtHandler.Generate(user));
         }
     }
 }
