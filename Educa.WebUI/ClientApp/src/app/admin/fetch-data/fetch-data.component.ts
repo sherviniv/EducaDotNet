@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { WeatherForecastClient, IWeatherForecast } from '../EducaDotNet-api';
+import { IWeatherForecast, WeatherForecastClient } from '../../EducaDotNet-api';
 
 @Component({
   selector: 'app-fetch-data',
