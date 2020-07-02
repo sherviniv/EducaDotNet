@@ -6,3 +6,9 @@
 .sidebar.toggled .sidebar-brand .sidebar-brand-text {
   display: block;
 }
+
+.invalid-input {
+  margin-top: 2px;
+  color: red;
+  font-size: 14px;
+}

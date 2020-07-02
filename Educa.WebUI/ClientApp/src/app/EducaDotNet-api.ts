@@ -454,6 +454,7 @@ export interface IDataResultOfUserDto extends IServerResult {
 }
 
 export class UserDto implements IUserDto {
+    id?: string | undefined;
     email!: string;
     userName!: string;
     firstName?: string | undefined;
@@ -471,6 +472,7 @@ export class UserDto implements IUserDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.email = _data["email"];
             this.userName = _data["userName"];
             this.firstName = _data["firstName"];
@@ -488,6 +490,7 @@ export class UserDto implements IUserDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["email"] = this.email;
         data["userName"] = this.userName;
         data["firstName"] = this.firstName;
@@ -498,6 +501,7 @@ export class UserDto implements IUserDto {
 }
 
 export interface IUserDto {
+    id?: string | undefined;
     email: string;
     userName: string;
     firstName?: string | undefined;

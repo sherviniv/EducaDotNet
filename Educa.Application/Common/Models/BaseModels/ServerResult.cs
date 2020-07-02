@@ -20,21 +20,18 @@ namespace Educa.Application.Common.Models.BaseModels
             return new ServerResult(true);
         }
 
-
         public static ServerResult Exception(string message,string status = "exception",string[] errors = default)
         {
             return new ServerResult()
             {
                 Succeeded = false,
                 Message = message,
-                IsException = true,
                 Status = status,
                 Errors = errors
             };
         }
 
         public bool Succeeded { get; set; }
-        protected bool IsException { get; set; }
         protected string Status { get; set; }
         public string Message { get; set; }
         public string[] Errors { get; set; }

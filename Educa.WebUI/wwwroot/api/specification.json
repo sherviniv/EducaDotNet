@@ -236,6 +236,10 @@
           "password"
         ],
         "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
           "email": {
             "type": "string",
             "format": "email",

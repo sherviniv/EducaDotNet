@@ -1,0 +1,109 @@
+<h2>{{model.id ? "Update" : "Add"}} User</h2>
+
+<div class="card shadow mb-4">
+  <div class="card-body">
+    <form class="user" #eform="ngForm" (ngSubmit)="onsubmit(eform)" novalidate>
+
+      <div class="form-group">
+        <label for="userName">User Name:</label>
+        <input type="text"
+               class="form-control form-control"
+               [(ngModel)]="model.userName"
+               id="userName"
+               name="userName"
+               #username="ngModel"
+               required
+               maxlength="64">
+
+        <div *ngIf="!username.valid  && (username.touched || eform.submitted)" class="invalid-input">
+          <div [hidden]="!username.errors.required">
+            User name is required.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email"
+               class="form-control form-control"
+               [(ngModel)]="model.email"
+               id="email"
+               name="email"
+               #email="ngModel"
+               required>
+        <div *ngIf="!email.valid  && (email.touched || eform.submitted)" class="invalid-input">
+          <div [hidden]="!email.errors.required">
+            FullName is required.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="firstName">First Name:</label>
+        <input type="text"
+               class="form-control form-control"
+               [(ngModel)]="model.firstName"
+               id="firstName"
+               name="firstName"
+               #firstName="ngModel"
+               required>
+        <div *ngIf="!firstName.valid  && (firstName.touched || eform.submitted)" class="invalid-input">
+          <div [hidden]="!firstName.errors.required">
+            first name is required.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name:</label>
+        <input type="text"
+               class="form-control form-control"
+               [(ngModel)]="model.lastName"
+               id="lastName"
+               name="lastName"
+               #lastName="ngModel"
+               required>
+        <div *ngIf="!lastName.valid  && (lastName.touched || eform.submitted)" class="invalid-input">
+          <div [hidden]="!lastName.errors.required">
+            last name is required
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password"
+               class="form-control form-control"
+               [(ngModel)]="model.password"
+               id="password"
+               name="password"
+               #password="ngModel"
+               required>
+        <div *ngIf="!password.valid  && (password.touched || eform.submitted)" class="invalid-input">
+          <div [hidden]="!password.errors.required">
+            password is required
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="cpassword">Confirm Password:</label>
+        <input type="password"
+               class="form-control form-control"
+               id="cpassword"
+               name="cpassword"
+               ngModel
+               #cpassword="ngModel">
+        <div *ngIf="(cpassword.touched || eform.submitted)" class="invalid-input">
+          <div [hidden]="cpassword.value == password.value">
+            Password doesn't match.
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success btn-icon-split">
+        <span class="text">Save</span>
+      </button>
+    </form>
+  </div>
+</div>

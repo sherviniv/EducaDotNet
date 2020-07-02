@@ -7,6 +7,8 @@ namespace Educa.Application.Common.Models.Dtos
 {
     public class UserDto
     {
+        public string Id { get; set; }
+
         [Required]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
