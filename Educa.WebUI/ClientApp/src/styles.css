@@ -7,8 +7,28 @@
   display: block;
 }
 
-.invalid-input {
-  margin-top: 2px;
-  color: red;
-  font-size: 14px;
+.fab-btn {
+  position: fixed;
+  width: 5rem !important;
+  height: 5rem !important;
+  bottom: 40px;
+  right: 40px;
+  background-color: #0C9;
+  color: #FFF;
+  border-radius: 50px;
+  text-align: center;
+  box-shadow: 2px 2px 3px #999;
+  font-size: 6rem;
 }
+
+  .fab-btn .fas {
+      font-size:2rem !important;
+  }
+
+  .invalid-input {
+    margin-top: 2px;
+    color: red;
+    font-size: 14px;
+  }
+
+

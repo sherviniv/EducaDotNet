@@ -3,6 +3,7 @@ import { UserDto, AccountClient } from '../../EducaDotNet-api';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { first } from 'rxjs/operators';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-user-edit',
@@ -12,7 +13,12 @@ import { first } from 'rxjs/operators';
 export class UserEditComponent implements OnInit {
   model: UserDto;
 
-  constructor(private client: AccountClient, private toastr: ToastrService) { }
+  constructor(
+    private client: AccountClient,
+    private toastr: ToastrService,
+    private router: Router,
+    private route: ActivatedRoute)
+  { }
 
   ngOnInit(): void {
     this.model = {} as UserDto;
@@ -28,8 +34,10 @@ export class UserEditComponent implements OnInit {
       .pipe(first())
       .subscribe(result => {
 
-        if (result.succeeded)
+        if (result.succeeded) {
           this.toastr.success("User created successfuly!");
+          this.router.navigate(['../'], { relativeTo: this.route });
+        }
 
         if (result.message)
           this.toastr.warning(result.message);
