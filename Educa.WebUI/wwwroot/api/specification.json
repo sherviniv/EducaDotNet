@@ -43,7 +43,14 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": [
+              "admin"
+            ]
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -81,7 +88,14 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": [
+              "admin"
+            ]
+          }
+        ]
       }
     },
     "/api/Account": {
@@ -113,7 +127,14 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": [
+              "admin"
+            ]
+          }
+        ]
       }
     },
     "/api/Account/UpdateUser": {
@@ -145,7 +166,14 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "JWT": [
+              "admin"
+            ]
+          }
+        ]
       }
     },
     "/api/Account/Login": {

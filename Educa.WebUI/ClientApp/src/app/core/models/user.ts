@@ -3,5 +3,5 @@ export class User {
   username: string;
   displayName: string;
   token?: string;
-  roles: string[];
+  role: string[];
 }

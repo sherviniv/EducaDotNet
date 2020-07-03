@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using Educa.Application.Common.Interfaces;
 using Educa.Application.Common.Models.BaseModels;
 using Educa.Application.Common.Models.Dtos;
+using Educa.Domain.Statics;
 using Educa.WebUI.Base;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Educa.WebUI.Controllers
 {
+    [Authorize(Roles = RoleNames.Admin)]
     public class AccountController : ApiController
     {
         private readonly IIdentityService _identityService;
@@ -44,6 +47,7 @@ namespace Educa.WebUI.Controllers
             return await _identityService.DeleteUserAsync(userId);
         }
 
+        [AllowAnonymous]
         [HttpPost("[action]")]
         public async Task<DataResult<string>> Login(LoginDto dtoModel)
         {

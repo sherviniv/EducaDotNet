@@ -15,9 +15,10 @@ export class ErrorInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(catchError((err: HttpErrorResponse) => {
 
       err.error.text().then((reqBody) => {
-
+        
+        reqBody = reqBody && reqBody.length > 0 ? reqBody : null;
         const res: ServerResult = JSON.parse(reqBody);
-
+        
         if (err.status === 500) {
           this.toastr.error(res.message,"Error");
         }
@@ -28,6 +29,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         if ([401, 403].indexOf(err.status) !== -1) {
           // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
+          this.toastr.warning("Unauthorized request", err.status.toString());
           this.authenticationService.logout();
           location.reload(true);
         }
