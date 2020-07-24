@@ -3,7 +3,6 @@
   <ng-template let-data="data" let-startPoint="startPoint">
     <thead>
       <tr>
-        <th width="50px">Row</th>
         <th>User name</th>
         <th>Email</th>
         <th>First name</th>
@@ -12,7 +11,6 @@
     </thead>
     <tbody *ngIf="user?.length != 0">
       <tr *ngFor="let user of data;index as i">
-        <td>{{ startPoint + i  }}</td>
         <td>{{ user.userName }}</td>
         <td>{{ user.email }}</td>
         <td>{{ user.firstName }}</td>

@@ -37,17 +37,16 @@ export class EdGridComponent implements OnInit {
       pagingType: 'simple_numbers',
       columns: cf.columns,
       searching: true,
+      order: []
     };
 
     if (cf.serverSide) {
       this.dtTrigger = null;
-      cf.options.ajax = (dataTablesParameters: any, callback) => {
 
+      cf.options.ajax = (dataTablesParameters: any, callback) => {
         this.http
-          .post<DataTablesResponse>(
-            cf.serverUrl,
-            dataTablesParameters, {}
-          ).subscribe(resp => {
+          .post<DataTablesResponse>(cf.serverUrl, dataTablesParameters, {})
+          .subscribe(resp => {
             cf.data = resp.data;
             this.startPoint = dataTablesParameters.start + 1;
             callback({
@@ -64,10 +63,13 @@ export class EdGridComponent implements OnInit {
         resp => {
           cf.data = resp.data;
           this.dtTrigger.next();
-          this.addSearchInputs();
         });
     }
 
+  }
+
+  ngAfterViewInit(): void {
+    this.addSearchInputs();
   }
 
   ngOnDestroy(): void {
@@ -107,11 +109,11 @@ export class EdGridComponent implements OnInit {
         });
       });
 
-      dtInstance.on('order.dt search.dt', function () {
-        dtInstance.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
-          cell.innerHTML = i + 1;
-        });
-      }).draw();
+      //dtInstance.on('order.dt search.dt', function () {
+      //  dtInstance.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+      //    cell.innerHTML = i + 1;
+      //  });
+      //}).draw();
 
     });
   }

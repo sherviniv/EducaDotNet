@@ -20,7 +20,6 @@ export class UsersComponent implements OnInit {
       serverSide: true,
       serverUrl: '/api/Account/getall',
       columns: [
-        { title: 'Row', data : '', orderable: false, searchable: false },
         { title: "User name", data: 'userName', searchable: true },
         { title: "Email", data: 'email', searchable: true },
         { title: "First name", data: 'firstName', searchable: true},

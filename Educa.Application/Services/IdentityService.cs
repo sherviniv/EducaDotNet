@@ -58,7 +58,7 @@ namespace Educa.Application.Services
             var users = _userManager.Users
                 .ProjectTo<UserVM>(_mapper.ConfigurationProvider);
 
-            throw new NotImplementedException();
+            return await users.ConvertToPaged<UserVM>(query);
         }
 
         public async Task<DataResult<UserDto>> GetUserAsync(string userId)
