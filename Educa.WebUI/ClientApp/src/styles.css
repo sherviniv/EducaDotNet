@@ -32,3 +32,15 @@
   }
 
 
+.dataTables_empty {
+  display: none !important;
+}
+
+table.dataTable tbody tr {
+  background-color: inherit !important;
+}
+
+.dataTables_filter {
+  display: none;
+}
+

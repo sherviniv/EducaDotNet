@@ -14,22 +14,14 @@
         "operationId": "Account_GetUser",
         "parameters": [
           {
-            "name": "userId",
-            "in": "query",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string",
               "nullable": true
             },
             "x-position": 1
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
           }
         ],
         "responses": {
@@ -59,22 +51,14 @@
         "operationId": "Account_DeleteUser",
         "parameters": [
           {
-            "name": "userId",
-            "in": "query",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string",
               "nullable": true
             },
             "x-position": 1
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "x-position": 2
           }
         ],
         "responses": {
@@ -84,6 +68,45 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ServerResult"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/api/Account/GetAll": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "operationId": "Account_GetAll",
+        "requestBody": {
+          "x-name": "query",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GridQuery"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GridDataOfUserVM"
                 }
               }
             }
@@ -135,9 +158,7 @@
             ]
           }
         ]
-      }
-    },
-    "/api/Account/UpdateUser": {
+      },
       "put": {
         "tags": [
           "Account"
@@ -313,6 +334,152 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "GridDataOfUserVM": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "draw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recordsTotal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recordsFiltered": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/UserVM"
+            }
+          }
+        }
+      },
+      "UserVM": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GridQuery": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "columns": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/GridColumn"
+            }
+          },
+          "draw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "length": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "order": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/DataOrder"
+            }
+          },
+          "search": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GridSearch"
+              }
+            ]
+          },
+          "start": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GridColumn": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "orderable": {
+            "type": "boolean"
+          },
+          "searchable": {
+            "type": "boolean"
+          },
+          "search": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GridSearch"
+              }
+            ]
+          }
+        }
+      },
+      "GridSearch": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "regex": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "DataOrder": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "column": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dir": {
+            "type": "string",
+            "nullable": true
           }
         }
       },

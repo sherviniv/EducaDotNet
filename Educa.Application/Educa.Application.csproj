@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Models\ViewModels\" />
     <Folder Include="Services\" />
   </ItemGroup>
 

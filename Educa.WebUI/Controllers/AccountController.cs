@@ -5,7 +5,9 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using Educa.Application.Common.Interfaces;
 using Educa.Application.Common.Models.BaseModels;
+using Educa.Application.Common.Models.BaseModels.ClientSide.Grid;
 using Educa.Application.Common.Models.Dtos;
+using Educa.Application.Common.Models.ViewModels;
 using Educa.Domain.Statics;
 using Educa.WebUI.Base;
 using Microsoft.AspNetCore.Authorization;
@@ -24,9 +26,15 @@ namespace Educa.WebUI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<DataResult<UserDto>> GetUser(string userId)
+        public async Task<DataResult<UserDto>> GetUser(string id)
         {
-            return await _identityService.GetUserAsync(userId);
+            return await _identityService.GetUserAsync(id);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<GridData<UserVM>> GetAll(GridQuery query)
+        {
+            return await _identityService.GetUsersGridAsync(query);
         }
 
         [HttpPost]
@@ -35,16 +43,16 @@ namespace Educa.WebUI.Controllers
             return await _identityService.CreateUserAsync(dtoModel);
         }
 
-        [HttpPut("[action]")]
+        [HttpPut]
         public async Task<ServerResult> UpdateUser(UserDto dtoModel)
         {
             return await _identityService.UpdateUserAsync(dtoModel);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ServerResult> DeleteUser(string userId)
+        public async Task<ServerResult> DeleteUser(string id)
         {
-            return await _identityService.DeleteUserAsync(userId);
+            return await _identityService.DeleteUserAsync(id);
         }
 
         [AllowAnonymous]

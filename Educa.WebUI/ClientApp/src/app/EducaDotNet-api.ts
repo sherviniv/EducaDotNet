@@ -15,8 +15,9 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAccountClient {
-    getUser(userId: string | null | undefined, id: string): Observable<DataResultOfUserDto>;
-    deleteUser(userId: string | null | undefined, id: string): Observable<ServerResult>;
+    getUser(id: string | null): Observable<DataResultOfUserDto>;
+    deleteUser(id: string | null): Observable<ServerResult>;
+    getAll(query: GridQuery): Observable<GridDataOfUserVM>;
     createUser(dtoModel: UserDto): Observable<ServerResult>;
     updateUser(dtoModel: UserDto): Observable<ServerResult>;
     login(dtoModel: LoginDto): Observable<DataResultOfString>;
@@ -35,13 +36,11 @@ export class AccountClient implements IAccountClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    getUser(userId: string | null | undefined, id: string): Observable<DataResultOfUserDto> {
-        let url_ = this.baseUrl + "/api/Account/{id}?";
+    getUser(id: string | null): Observable<DataResultOfUserDto> {
+        let url_ = this.baseUrl + "/api/Account/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        if (userId !== undefined && userId !== null)
-            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -88,13 +87,11 @@ export class AccountClient implements IAccountClient {
         return _observableOf<DataResultOfUserDto>(<any>null);
     }
 
-    deleteUser(userId: string | null | undefined, id: string): Observable<ServerResult> {
-        let url_ = this.baseUrl + "/api/Account/{id}?";
+    deleteUser(id: string | null): Observable<ServerResult> {
+        let url_ = this.baseUrl + "/api/Account/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        if (userId !== undefined && userId !== null)
-            url_ += "userId=" + encodeURIComponent("" + userId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -139,6 +136,58 @@ export class AccountClient implements IAccountClient {
             }));
         }
         return _observableOf<ServerResult>(<any>null);
+    }
+
+    getAll(query: GridQuery): Observable<GridDataOfUserVM> {
+        let url_ = this.baseUrl + "/api/Account/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(query);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<GridDataOfUserVM>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GridDataOfUserVM>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<GridDataOfUserVM> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GridDataOfUserVM.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GridDataOfUserVM>(<any>null);
     }
 
     createUser(dtoModel: UserDto): Observable<ServerResult> {
@@ -194,7 +243,7 @@ export class AccountClient implements IAccountClient {
     }
 
     updateUser(dtoModel: UserDto): Observable<ServerResult> {
-        let url_ = this.baseUrl + "/api/Account/UpdateUser";
+        let url_ = this.baseUrl + "/api/Account";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(dtoModel);
@@ -507,6 +556,318 @@ export interface IUserDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     password: string;
+}
+
+export class GridDataOfUserVM implements IGridDataOfUserVM {
+    draw?: number;
+    recordsTotal?: number;
+    recordsFiltered?: number;
+    data?: UserVM[] | undefined;
+
+    constructor(data?: IGridDataOfUserVM) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.draw = _data["draw"];
+            this.recordsTotal = _data["recordsTotal"];
+            this.recordsFiltered = _data["recordsFiltered"];
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(UserVM.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GridDataOfUserVM {
+        data = typeof data === 'object' ? data : {};
+        let result = new GridDataOfUserVM();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["draw"] = this.draw;
+        data["recordsTotal"] = this.recordsTotal;
+        data["recordsFiltered"] = this.recordsFiltered;
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGridDataOfUserVM {
+    draw?: number;
+    recordsTotal?: number;
+    recordsFiltered?: number;
+    data?: UserVM[] | undefined;
+}
+
+export class UserVM implements IUserVM {
+    id?: string | undefined;
+    email?: string | undefined;
+    userName?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+
+    constructor(data?: IUserVM) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.email = _data["email"];
+            this.userName = _data["userName"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+        }
+    }
+
+    static fromJS(data: any): UserVM {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserVM();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["email"] = this.email;
+        data["userName"] = this.userName;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        return data; 
+    }
+}
+
+export interface IUserVM {
+    id?: string | undefined;
+    email?: string | undefined;
+    userName?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+}
+
+export class GridQuery implements IGridQuery {
+    columns?: GridColumn[] | undefined;
+    draw?: number;
+    length?: number;
+    order?: DataOrder[] | undefined;
+    search?: GridSearch | undefined;
+    start?: number;
+
+    constructor(data?: IGridQuery) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["columns"])) {
+                this.columns = [] as any;
+                for (let item of _data["columns"])
+                    this.columns!.push(GridColumn.fromJS(item));
+            }
+            this.draw = _data["draw"];
+            this.length = _data["length"];
+            if (Array.isArray(_data["order"])) {
+                this.order = [] as any;
+                for (let item of _data["order"])
+                    this.order!.push(DataOrder.fromJS(item));
+            }
+            this.search = _data["search"] ? GridSearch.fromJS(_data["search"]) : <any>undefined;
+            this.start = _data["start"];
+        }
+    }
+
+    static fromJS(data: any): GridQuery {
+        data = typeof data === 'object' ? data : {};
+        let result = new GridQuery();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.columns)) {
+            data["columns"] = [];
+            for (let item of this.columns)
+                data["columns"].push(item.toJSON());
+        }
+        data["draw"] = this.draw;
+        data["length"] = this.length;
+        if (Array.isArray(this.order)) {
+            data["order"] = [];
+            for (let item of this.order)
+                data["order"].push(item.toJSON());
+        }
+        data["search"] = this.search ? this.search.toJSON() : <any>undefined;
+        data["start"] = this.start;
+        return data; 
+    }
+}
+
+export interface IGridQuery {
+    columns?: GridColumn[] | undefined;
+    draw?: number;
+    length?: number;
+    order?: DataOrder[] | undefined;
+    search?: GridSearch | undefined;
+    start?: number;
+}
+
+export class GridColumn implements IGridColumn {
+    data?: string | undefined;
+    name?: string | undefined;
+    orderable?: boolean;
+    searchable?: boolean;
+    search?: GridSearch | undefined;
+
+    constructor(data?: IGridColumn) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"];
+            this.name = _data["name"];
+            this.orderable = _data["orderable"];
+            this.searchable = _data["searchable"];
+            this.search = _data["search"] ? GridSearch.fromJS(_data["search"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GridColumn {
+        data = typeof data === 'object' ? data : {};
+        let result = new GridColumn();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data;
+        data["name"] = this.name;
+        data["orderable"] = this.orderable;
+        data["searchable"] = this.searchable;
+        data["search"] = this.search ? this.search.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGridColumn {
+    data?: string | undefined;
+    name?: string | undefined;
+    orderable?: boolean;
+    searchable?: boolean;
+    search?: GridSearch | undefined;
+}
+
+export class GridSearch implements IGridSearch {
+    regex?: boolean;
+    value?: string | undefined;
+
+    constructor(data?: IGridSearch) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.regex = _data["regex"];
+            this.value = _data["value"];
+        }
+    }
+
+    static fromJS(data: any): GridSearch {
+        data = typeof data === 'object' ? data : {};
+        let result = new GridSearch();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["regex"] = this.regex;
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface IGridSearch {
+    regex?: boolean;
+    value?: string | undefined;
+}
+
+export class DataOrder implements IDataOrder {
+    column?: number;
+    dir?: string | undefined;
+
+    constructor(data?: IDataOrder) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.column = _data["column"];
+            this.dir = _data["dir"];
+        }
+    }
+
+    static fromJS(data: any): DataOrder {
+        data = typeof data === 'object' ? data : {};
+        let result = new DataOrder();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["column"] = this.column;
+        data["dir"] = this.dir;
+        return data; 
+    }
+}
+
+export interface IDataOrder {
+    column?: number;
+    dir?: string | undefined;
 }
 
 export class DataResultOfString extends ServerResult implements IDataResultOfString {

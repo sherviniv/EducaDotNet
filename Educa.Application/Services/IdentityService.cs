@@ -1,13 +1,18 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Educa.Application.Common.Exceptions;
 using Educa.Application.Common.Extensions;
 using Educa.Application.Common.Interfaces;
 using Educa.Application.Common.Models.BaseModels;
+using Educa.Application.Common.Models.BaseModels.ClientSide.Grid;
 using Educa.Application.Common.Models.Dtos;
+using Educa.Application.Common.Models.ViewModels;
 using Educa.Domain.Entities;
 using Educa.Infrastructure.Jwt;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,6 +42,23 @@ namespace Educa.Application.Services
             var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
 
             return user.UserName;
+        }
+
+        public async Task<DataResult<List<UserVM>>> GetUsersAsync() 
+        {
+            var users = await _userManager.Users
+                .ProjectTo<UserVM>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return new DataResult<List<UserVM>>(users);
+        }
+
+        public async Task<GridData<UserVM>> GetUsersGridAsync(GridQuery query)
+        {
+            var users = _userManager.Users
+                .ProjectTo<UserVM>(_mapper.ConfigurationProvider);
+
+            throw new NotImplementedException();
         }
 
         public async Task<DataResult<UserDto>> GetUserAsync(string userId)

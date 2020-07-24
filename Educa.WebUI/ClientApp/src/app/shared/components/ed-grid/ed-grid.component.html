@@ -1,0 +1,17 @@
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">{{config.title}}</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <div class="">
+
+      </div>
+      <table datatable class="table table-bordered" [dtTrigger]="dtTrigger" [dtOptions]="config.options" id="{{config.id}}">
+        <ng-container *ngTemplateOutlet="layoutTemplate; context: {data: config.data,startPoint:startPoint}">
+
+        </ng-container>
+      </table>
+    </div>
+  </div>
+</div>
