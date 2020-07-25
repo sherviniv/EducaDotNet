@@ -281,8 +281,7 @@
         "additionalProperties": false,
         "required": [
           "email",
-          "userName",
-          "password"
+          "userName"
         ],
         "properties": {
           "id": {
@@ -313,7 +312,7 @@
           },
           "password": {
             "type": "string",
-            "minLength": 1
+            "nullable": true
           }
         }
       },

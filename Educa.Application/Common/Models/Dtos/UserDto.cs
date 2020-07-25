@@ -23,7 +23,6 @@ namespace Educa.Application.Common.Models.Dtos
         [StringLength(255)]
         public string LastName { get; set; }
 
-        [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
     }

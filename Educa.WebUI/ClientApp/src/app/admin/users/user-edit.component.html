@@ -86,7 +86,7 @@
                  id="password"
                  name="password"
                  #password="ngModel"
-                 required>
+                 [required]="!model.id">
           <div *ngIf="!password.valid  && (password.touched || eform.submitted)" class="invalid-input">
             <div [hidden]="!password.errors.required">
               password is required
@@ -102,7 +102,7 @@
                  name="cpassword"
                  ngModel
                  #cpassword="ngModel">
-          <div *ngIf="(cpassword.touched || eform.submitted)" class="invalid-input">
+          <div *ngIf="(cpassword.touched || eform.submitted && password.value)" class="invalid-input">
             <div [hidden]="cpassword.value == password.value">
               Password doesn't match.
             </div>
@@ -115,8 +115,8 @@
         <span class="text">Save</span>
       </button>
 
-      <a [routerLink]="['../']" class="ml-2 btn btn-light btn-icon-split">
-        <span class="text"  >Cancel</span>
+      <a [routerLink]="['/admin/user']" class="ml-2 btn btn-light btn-icon-split">
+        <span class="text">Cancel</span>
       </a>
     </form>
   </div>

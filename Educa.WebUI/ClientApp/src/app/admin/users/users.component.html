@@ -7,6 +7,7 @@
         <th>Email</th>
         <th>First name</th>
         <th>Last name</th>
+        <th class="text-center">Action</th>
       </tr>
     </thead>
     <tbody *ngIf="user?.length != 0">
@@ -15,12 +16,20 @@
         <td>{{ user.email }}</td>
         <td>{{ user.firstName }}</td>
         <td>{{ user.lastName }}</td>
+        <td class="text-center">
+          <a [routerLink]="['edit/',user.id]" class="btn btn-warning btn-circle">
+            <i class="fas fa-pen"></i>
+          </a>
+          <button (click)="delete(user.id)" class="ml-1 btn btn-danger btn-circle">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
       </tr>
     </tbody>
   </ng-template>
 </ed-grid>
 
-<a [routerLink]="['edit']" class="btn btn-success btn-circle btn-lg fab-btn">
+<a [routerLink]="['add']" class="btn btn-success btn-circle btn-lg fab-btn">
   <i class="fas fa-plus"></i>
 </a>
 

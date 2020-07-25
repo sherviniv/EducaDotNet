@@ -16,7 +16,8 @@ const routes: Routes = [
         children: [
           { path: "", component: DashboardComponent },
           { path: "user", component: UsersComponent },
-          { path: "user/edit", component: UserEditComponent },
+          { path: "user/add", component: UserEditComponent },
+          { path: "user/edit/:id", component: UserEditComponent },
           { path: "counter", component: CounterComponent },
           { path: "fetch-data", component: FetchDataComponent },
         ]

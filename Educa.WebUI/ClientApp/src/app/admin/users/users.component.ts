@@ -11,7 +11,9 @@ import { GridConfig } from '../../shared/components';
 export class UsersComponent implements OnInit {
   gridconfig: GridConfig;
 
-  constructor(private client: AccountClient, private toastr: ToastrService) { }
+  constructor(
+    private client: AccountClient,
+    private toastr: ToastrService){ }
 
   ngOnInit(): void {
     this.gridconfig = {
@@ -23,10 +25,14 @@ export class UsersComponent implements OnInit {
         { title: "User name", data: 'userName', searchable: true },
         { title: "Email", data: 'email', searchable: true },
         { title: "First name", data: 'firstName', searchable: true},
-        { title: "Last name", data: 'lastName', searchable: true }
+        { title: "Last name", data: 'lastName', searchable: true },
+        { title: "Action", data: "", orderable: false }
       ]
     };
 
   }
 
+  delete(id: string) {
+    console.log(id);
+  }
 }

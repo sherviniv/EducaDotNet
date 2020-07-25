@@ -3,8 +3,8 @@
     <h6 class="m-0 font-weight-bold text-primary">{{config.title}}</h6>
   </div>
   <div class="card-body">
-    <div class="table-responsive col-lg-12">
-      <table datatable class="table table-bordered" [dtTrigger]="dtTrigger" [dtOptions]="config.options" id="{{config.id}}">
+    <div class="table-responsive-sm col-lg-12">
+      <table datatable class="table table-bordered " [dtTrigger]="dtTrigger" [dtOptions]="config.options" id="{{config.id}}">
         <ng-container *ngTemplateOutlet="layoutTemplate; context: {data: config.data,startPoint:startPoint}">
 
         </ng-container>

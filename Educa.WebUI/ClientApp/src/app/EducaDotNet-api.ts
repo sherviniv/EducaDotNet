@@ -508,7 +508,7 @@ export class UserDto implements IUserDto {
     userName!: string;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    password!: string;
+    password?: string | undefined;
 
     constructor(data?: IUserDto) {
         if (data) {
@@ -555,7 +555,7 @@ export interface IUserDto {
     userName: string;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    password: string;
+    password?: string | undefined;
 }
 
 export class GridDataOfUserVM implements IGridDataOfUserVM {
