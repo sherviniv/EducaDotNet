@@ -8,6 +8,7 @@ import { LoginComponent } from './pages';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtInterceptor, ErrorInterceptor } from './core/helpers';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [AppComponent, LoginComponent],
@@ -17,6 +18,7 @@ import { JwtInterceptor, ErrorInterceptor } from './core/helpers';
     FormsModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
+    NgbModule,
     AppRoutingModule
   ],
   providers: [
