@@ -36,12 +36,15 @@ export class UsersComponent implements OnInit {
 
   delete(id: string) {
     this.confirm.confirm("Delete User", "Do you want to delete user?", "Remove", "Cancle", "md").then(res => {
+      
       if (res)
         this.client.deleteUser(id).pipe(first()).subscribe((response) => {
           if (response.succeeded) {
             this.toastr.success("User deleted successfuly!");
+            this.gridconfig.refresh();
           }
         });
+
     });
   }
 }

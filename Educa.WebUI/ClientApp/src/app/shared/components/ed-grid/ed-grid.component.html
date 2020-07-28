@@ -4,7 +4,7 @@
   </div>
   <div class="card-body">
     <div class="table-responsive-sm col-lg-12">
-      <table datatable class="table table-bordered " [dtTrigger]="dtTrigger" [dtOptions]="config.options" id="{{config.id}}">
+      <table datatable class="table table-bordered" [dtOptions]="config.options" id="{{config.id}}">
         <ng-container *ngTemplateOutlet="layoutTemplate; context: {data: config.data,startPoint:startPoint}">
 
         </ng-container>

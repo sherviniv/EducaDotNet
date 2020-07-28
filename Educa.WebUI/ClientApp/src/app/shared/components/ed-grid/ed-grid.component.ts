@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ContentChild, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ContentChild, TemplateRef, ViewChild, EventEmitter } from '@angular/core';
 import { Subject } from 'rxjs/internal/Subject';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
@@ -19,12 +19,12 @@ export class EdGridComponent implements OnInit {
   datatableElement: DataTableDirective;
 
   dtOptions: DataTables.Settings = {};
-  dtTrigger: Subject<any> = new Subject();
   startPoint: number;
 
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
+
   }
 
   ngAfterContentInit() {
@@ -40,42 +40,62 @@ export class EdGridComponent implements OnInit {
       order: []
     };
 
-    if (cf.serverSide) {
-      this.dtTrigger = null;
-
-      cf.options.ajax = (dataTablesParameters: any, callback) => {
-        this.http
-          .post<DataTablesResponse>(cf.serverUrl, dataTablesParameters, {})
-          .subscribe(resp => {
-            cf.data = resp.data;
-            this.startPoint = dataTablesParameters.start + 1;
-            callback({
-              recordsTotal: resp.recordsTotal,
-              recordsFiltered: resp.recordsFiltered,
-              data: []
-            });
-          });
-      }
-
-    }
-    else {
-      this.http.post<any>(cf.serverUrl, {}, {}).subscribe(
-        resp => {
-          cf.data = resp.data;
-          this.dtTrigger.next();
-        });
-    }
 
   }
 
   ngAfterViewInit(): void {
+    var self = this;
+    const cf = this.config;
+    
+    if (cf.serverSide) {
+      this.loadServerSide();
+    }
+    else {
+      this.loadClientSide();
+    }
+
     this.addSearchInputs();
+
+    self.config.refresh = function () {
+
+      if (cf.serverSide) {
+        self.datatableElement.dtInstance.then((dtInstance: DataTables.Api) => {
+          dtInstance.draw();
+        });
+      }
+      else
+        self.loadClientSide();
+    }
+
   }
 
-  ngOnDestroy(): void {
+  loadServerSide() {
+    const cf = this.config;
+    cf.options.ajax = (dataTablesParameters: any, callback) => {
+      this.http
+        .post<DataTablesResponse>(cf.serverUrl, dataTablesParameters, {})
+        .subscribe(resp => {
+          cf.data = resp.data;
+          this.startPoint = dataTablesParameters.start + 1;
+          callback({
+            recordsTotal: resp.recordsTotal,
+            recordsFiltered: resp.recordsFiltered,
+            data: []
+          });
+        });
+    }
+  }
 
-    if (this.dtTrigger)
-      this.dtTrigger.unsubscribe();
+  loadClientSide() {
+    const cf = this.config;
+            
+    this.http.post<any>(cf.serverUrl, {}, {}).subscribe(
+      resp => {
+        cf.data = resp.data;
+        this.datatableElement.dtInstance.then((dtInstance: DataTables.Api) => {
+          dtInstance.draw();
+        });
+      });
   }
 
   addSearchInputs() {
@@ -127,6 +147,7 @@ export class GridConfig {
   data?: any[];
   options?: DataTables.Settings;
   columns: DataTables.ColumnSettings[];
+  refresh?: () => void;
 }
 
 class DataTablesResponse {

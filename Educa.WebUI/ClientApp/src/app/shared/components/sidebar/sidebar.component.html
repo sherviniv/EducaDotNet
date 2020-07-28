@@ -10,7 +10,7 @@
 
   <!-- Nav Item - Dashboard -->
   <li class="nav-item">
-    <a class="nav-link" href="index.html">
+    <a class="nav-link"[routerLink]="['/admin']">
       <i class="fas fa-fw fa-tachometer-alt"></i>
       <span>Dashboard</span>
     </a>
@@ -34,7 +34,7 @@
       <div class="bg-white py-2 collapse-inner rounded">
         <h6 class="collapse-header">Manage Users:</h6>
         <a class="collapse-item" [routerLink]="['user']" >Manage</a>
-        <a class="collapse-item" [routerLink]="['user/edit']" >Add</a>
+        <a class="collapse-item" [routerLink]="['user/add']" >Add</a>
       </div>
     </div>
   </li>
