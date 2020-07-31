@@ -29,7 +29,7 @@ namespace Educa.Infrastructure.Jwt
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                       new Claim("userid",user.Id),
+                       new Claim(ClaimTypes.NameIdentifier,user.Id),
                        new Claim("username",user.UserName),
                        new Claim("displayName",$"{user.FirstName} {user.LastName}" ),
                 }),

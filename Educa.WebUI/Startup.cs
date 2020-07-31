@@ -89,6 +89,7 @@ namespace Educa.WebUI
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseAutoLoggerMiddleware();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
