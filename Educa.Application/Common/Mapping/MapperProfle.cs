@@ -13,7 +13,9 @@ namespace Educa.Application.Common.Mapping
         public MapperProfle()
         {
             CreateMap<ApplicationUser, UserDto>().ReverseMap();
-            CreateMap<UserVM, ApplicationUser>().ReverseMap();
+            CreateMap<ApplicationUser, UserVM>().ReverseMap();
+            
+            CreateMap<Person, PersonDto>().ReverseMap();
         }
     }
 }

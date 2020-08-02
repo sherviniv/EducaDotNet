@@ -347,6 +347,76 @@ export class AccountClient implements IAccountClient {
     }
 }
 
+export interface IPersonClient {
+    create(dtoModel: PersonDto): Observable<ServerResult>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class PersonClient implements IPersonClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    create(dtoModel: PersonDto): Observable<ServerResult> {
+        let url_ = this.baseUrl + "/api/Person";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(dtoModel);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<ServerResult>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ServerResult>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<ServerResult> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ServerResult.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ServerResult>(<any>null);
+    }
+}
+
 export interface IWeatherForecastClient {
     get(): Observable<WeatherForecast[]>;
 }
@@ -941,6 +1011,63 @@ export class LoginDto implements ILoginDto {
 export interface ILoginDto {
     userName: string;
     password: string;
+}
+
+export class PersonDto implements IPersonDto {
+    firstName!: string;
+    lastName!: string;
+    dateOfBirth?: Date | undefined;
+    mobile?: string | undefined;
+    personType?: PersonTypes;
+
+    constructor(data?: IPersonDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
+            this.mobile = _data["mobile"];
+            this.personType = _data["personType"];
+        }
+    }
+
+    static fromJS(data: any): PersonDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
+        data["mobile"] = this.mobile;
+        data["personType"] = this.personType;
+        return data; 
+    }
+}
+
+export interface IPersonDto {
+    firstName: string;
+    lastName: string;
+    dateOfBirth?: Date | undefined;
+    mobile?: string | undefined;
+    personType?: PersonTypes;
+}
+
+export enum PersonTypes {
+    Student = 1,
+    Staff = 2,
 }
 
 export class WeatherForecast implements IWeatherForecast {

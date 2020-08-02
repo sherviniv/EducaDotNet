@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Educa.Application.Common.Interfaces;
 using Educa.Application.Common.Models.BaseModels;
+using Educa.Application.Interfaces;
 using Educa.Application.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ namespace Educa.Application
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IPersonService, PersonService>();
         }
     }
 }

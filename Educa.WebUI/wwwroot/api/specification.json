@@ -229,6 +229,45 @@
         }
       }
     },
+    "/api/Person": {
+      "post": {
+        "tags": [
+          "Person"
+        ],
+        "operationId": "Person_Create",
+        "requestBody": {
+          "x-name": "dtoModel",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerResult"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "admin"
+            ]
+          }
+        ]
+      }
+    },
     "/WeatherForecast": {
       "get": {
         "tags": [
@@ -516,6 +555,50 @@
             "minLength": 1
           }
         }
+      },
+      "PersonDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "firstName",
+          "lastName"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 0
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 0
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "mobile": {
+            "type": "string",
+            "nullable": true
+          },
+          "personType": {
+            "$ref": "#/components/schemas/PersonTypes"
+          }
+        }
+      },
+      "PersonTypes": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Student",
+          "Staff"
+        ],
+        "enum": [
+          1,
+          2
+        ]
       },
       "WeatherForecast": {
         "type": "object",
